@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat Distribuido</title>
+  <style>
+    /* Estilos básicos */
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="room-selector">
+      <input id="username" placeholder="Tu nombre">
+      <input id="room" placeholder="Sala" value="general">
+      <button id="join">Unirse</button>
+    </div>
+    
+    <div class="chat-container hidden">
+      <div id="messages"></div>
+      <div class="message-input">
+        <input id="message" placeholder="Escribe un mensaje">
+        <button id="send">Enviar</button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

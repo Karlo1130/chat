@@ -5,6 +5,8 @@ const dbClient = require('./config/db');
 const Message = require('./models/message');
 const synchronizationService = require('./services/synchronization');
 const logger = require('./utils/logger');
+const path = require('path');
+const chatRoutes = require('./routes/chat');
 
 const app = express();
 
@@ -15,6 +17,13 @@ app.use((req, res, next) => {
   logger.info(`${req.method} ${req.url}`);
   next();
 });
+app.use(express.static(path.join(__dirname, '..', 'public')));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.use('/api/chat', chatRoutes);
 
 // Ruta de estado
 app.get('/api/status', async (req, res) => {

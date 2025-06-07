@@ -20,8 +20,6 @@ class DBClient {
     //this.url = `mongodb://${replicaSetHosts}/${dbName}?replicaSet=${replicaSet}`
     this.url = `mongodb+srv://${adminName}:${adminPassword}@cluster0.hbdwoat.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
     this.client = new MongoClient(this.url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       ReadPreference: 'secondaryPreferred'
     });
     this.isConnected = false
