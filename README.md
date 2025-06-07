@@ -1,4 +1,4 @@
-# patitas-app
+# chat-distribuido
 
 npm install  
 cambiar .env.example a .env  
