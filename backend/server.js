@@ -66,8 +66,3 @@ io.on('connection', (socket) => {
     logger.info(`Client disconnected: ${socket.id}`);
   });
 });
-
-// Integrar con el servicio de sincronización
-synchronizationService.on('newMessage', (message) => {
-  io.to(message.room).emit('newMessage', message);
-});

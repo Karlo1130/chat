@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const dbClient = require('./config/db');
 const Message = require('./models/message');
-const synchronizationService = require('./services/synchronization');
 const logger = require('./utils/logger');
 const path = require('path');
 const chatRoutes = require('./routes/chat');
