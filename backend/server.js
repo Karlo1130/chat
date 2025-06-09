@@ -2,7 +2,6 @@ const http = require('http');
 const socketIo = require('socket.io');
 const app = require('./app');
 const ChatController = require('./controllers/chat');
-const synchronizationService = require('../sync/services/synchronization')
 const logger = require('../shared/config/logger');
 const dbClient = require('../shared/config/db');
 
@@ -23,7 +22,7 @@ const io = socketIo(server, {
 const chatController = new ChatController(io);
 
 // Escuchar nuevos mensajes desde el Change Stream
-synchronizationService.on('newMessage', (message) => {
+io.on('newMessage', (message) => {
   logger.info(`Broadcasting new message to room ${message.room}`);
   io.to(message.room).emit('newMessage', message);
 });

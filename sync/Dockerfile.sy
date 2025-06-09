@@ -2,7 +2,6 @@ FROM node:18
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
-COPY backend/ ./backend
+COPY sync/ ./sync
 COPY shared/ ./shared
-EXPOSE 3000
-CMD ["node", "backend/server.js"]
+CMD ["node", "sync/index.js"]
