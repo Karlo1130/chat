@@ -1,0 +1,6 @@
+[
+  { "id": "node1", "url": "http://api-node1:3000", "isActive": true },
+  { "id": "node2", "url": "http://api-node2:3000", "isActive": true },
+  { "id": "node3", "url": "http://api-node3:3000", "isActive": true },
+  { "id": "nodeAtlas", "url": "mongodb+srv://karlod1130:kalsierk@cluster0.hbdwoat.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", "isActive": true }
+]

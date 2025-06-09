@@ -1,9 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const dbClient = require('./config/db');
-const Message = require('./models/message');
-const logger = require('./utils/logger');
+const dbClient = require('../shared/config/db');
+const Message = require('../shared/models/message');
+const logger = require('../shared/config/logger');
 const path = require('path');
 const chatRoutes = require('./routes/chat');
 

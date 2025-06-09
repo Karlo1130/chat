@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const dbClient = require('../config/db');
-const logger = require('../utils/logger');
+const dbClient = require('../../shared/config/db');
+const logger = require('../../shared/config/logger');
 
 // Obtener historial de mensajes
 router.get('/messages/:room', async (req, res) => {

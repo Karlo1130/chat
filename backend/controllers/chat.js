@@ -1,6 +1,6 @@
-const dbClient = require('../config/db');
-const Message = require('../models/message');
-const logger = require('../utils/logger');
+const dbClient = require('../../shared/config/db');
+const Message = require('../../shared/models/message');
+const logger = require('../../shared/config/logger');
 
 class ChatController {
   constructor(io) {

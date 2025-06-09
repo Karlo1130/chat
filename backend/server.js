@@ -2,9 +2,9 @@ const http = require('http');
 const socketIo = require('socket.io');
 const app = require('./app');
 const ChatController = require('./controllers/chat');
-const synchronizationService = require('./services/synchronization');
-const logger = require('./utils/logger');
-const dbClient = require('./config/db');
+const synchronizationService = require('../sync/services/synchronization')
+const logger = require('../shared/config/logger');
+const dbClient = require('../shared/config/db');
 
 const port = process.env.PORT || 3000;
 const server = http.createServer(app);

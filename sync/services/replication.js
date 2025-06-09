@@ -1,12 +1,14 @@
+const fs = require('fs');
+const path = require('path');
 const axios = require('axios');
-const { knownNodes, currentNode } = require('../config/nodes');
-const dbClient = require('../config/db');
-const logger = require('../utils/logger');
+const dbClient = require('../../shared/config/db');
+const logger = require('../../shared/config/logger');
 
 class ReplicationService {
   constructor() {
-    this.nodes = knownNodes;
-    this.currentNode = currentNode;
+    const nodesPath = path.join(__dirname, '../nodes/nodes.json');
+    this.nodes = JSON.parse(fs.readFileSync(nodesPath));
+    this.currentNode = this.nodes.find(n => n.url === process.env.CURRENT_NODE_URL);
   }
 
   // Replicar un mensaje a otros nodos

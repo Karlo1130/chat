@@ -1,6 +1,6 @@
 const { EventEmitter } = require('events');
-const dbClient = require('../config/db');
-const logger = require('../utils/logger');
+const dbClient = require('../../shared/config/db');
+const logger = require('../../shared/config/logger');
 
 class SynchronizationService extends EventEmitter {
   constructor() {
