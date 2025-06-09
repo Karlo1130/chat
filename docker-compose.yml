@@ -1,0 +1,25 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.api
+    ports:
+      - "3000:3000"
+    environment:
+      - ADMIN_PASSWORD=kalsierk
+      - ADMIN_NAME=karlod1130
+    networks:
+      - chat-net
+
+  frontend:
+    build:
+      context: .
+      dockerfile: public/Dockerfile.fe
+    ports:
+      - "80:80"
+    networks:
+        - chat-net
+
+networks:
+  chat-net:
+    driver: bridge
