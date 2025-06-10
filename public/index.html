@@ -74,67 +74,71 @@
   </div>
 
   <!-- Scripts -->
-  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-  <script>
-    const BACKEND_URL = 'http://127.0.0.1:3000'
-    const socket = io(BACKEND_URL);
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+    const API_URL = 'http://127.0.0.1:3000'; // API REST (contenedor api)
+    const WS_URL = 'ws://127.0.0.1:4000';    // WebSocket (contenedor sync)
     let currentRoom = 'general';
     let username = '';
+
+    const socket = io(WS_URL);
+    socket.onmessage = (event) => {
+      const { type, message } = JSON.parse(event.data);
+      if (type === 'new_message') addMessageToUI(message);
+    };
 
     document.getElementById('join').addEventListener('click', () => {
       username = document.getElementById('username').value.trim();
       currentRoom = document.getElementById('room').value.trim() || 'general';
-
       if (username) {
-        socket.emit('joinRoom', currentRoom);
         document.querySelector('.chat-container').classList.remove('hidden');
         document.querySelector('.room-selector').classList.add('hidden');
       }
     });
 
     document.getElementById('send').addEventListener('click', sendMessage);
-    document.getElementById('message').addEventListener('keypress', (e) => {
+    document.getElementById('message').addEventListener('keypress', e => {
       if (e.key === 'Enter') sendMessage();
     });
 
-    function sendMessage() {
+    async function sendMessage() {
       const messageInput = document.getElementById('message');
       const content = messageInput.value.trim();
+      if (!content) return;
 
-      if (content) {
-        socket.emit('sendMessage', {
-          sender: username,
-          content,
-          room: currentRoom,
-          timestamp: Date.now()
+      const message = {
+        sender: username,
+        content,
+        room: currentRoom,
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        await fetch(`${API_URL}/api/chat/messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(message)
         });
-        messageInput.value = '';
+      } catch (err) {
+        console.error('Error al enviar mensaje a la API:', err);
       }
+      messageInput.value = '';
     }
-    socket.on('newMessage', (message) => {
-      addMessageToUI(message);
-    });
-    socket.on('messageHistory', (messages) => {
-      const container = document.getElementById('messages');
-      container.innerHTML = '';
-      messages.forEach(addMessageToUI);
-    });
+
     function addMessageToUI(message) {
       const container = document.getElementById('messages');
       const isOwnMessage = message.sender === username;
 
-      const messageElement = document.createElement('div');
-      messageElement.className = `mb-2 d-flex ${isOwnMessage ? 'justify-content-end' : 'justify-content-start'}`;
-
-      messageElement.innerHTML = `
+      const div = document.createElement('div');
+      div.className = `mb-2 d-flex ${isOwnMessage ? 'justify-content-end' : 'justify-content-start'}`;
+      div.innerHTML = `
         <div class="p-2 rounded ${isOwnMessage ? 'bg-primary text-white' : 'bg-light border'}" style="max-width: 75%;">
           <div class="small fw-bold">${message.sender}</div>
           <div>${message.content}</div>
           <div class="text-end small text-muted">${new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
         </div>
       `;
-
-      container.appendChild(messageElement);
+      container.appendChild(div);
       container.scrollTop = container.scrollHeight;
     }
   </script>

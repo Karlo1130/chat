@@ -16,9 +16,10 @@ class DBClient {
     //const replicaSet = process.env.REPLICA_SET || 'rs0';
     const adminPassword = process.env.ADMIN_PASSWORD;
     const adminName = process.env.ADMIN_NAME;
+    const url = process.env.URL
     
     //this.url = `mongodb://${replicaSetHosts}/${dbName}?replicaSet=${replicaSet}`
-    this.url = `mongodb+srv://${adminName}:${adminPassword}@cluster0.hbdwoat.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
+    this.url = url
     this.client = new MongoClient(this.url, {
       ReadPreference: 'secondaryPreferred'
     });

@@ -8,6 +8,7 @@ services:
     environment:
       - ADMIN_PASSWORD=kalsierk
       - ADMIN_NAME=karlod1130
+      - URL=mongodb://mongo1:27017,mongo2:27017,mongo3:27017/chat?replicaSet=rs0
     networks:
       - chat-net
 
@@ -18,7 +19,7 @@ services:
     ports:
       - "80:80"
     networks:
-        - chat-net
+      - chat-net
 
   sync:
     build: 
@@ -26,8 +27,12 @@ services:
       dockerfile: sync/Dockerfile.sy
     container_name: sync
     environment:
-      - CURRENT_NODE_URL=mongodb://mongo1:27017,mongo2:27017,mongo3:27017/chat?replicaSet=rs0
+      - URL=mongodb://mongo1:27017,mongo2:27017,mongo3:27017/chat?replicaSet=rs0
       - NODE_ID=node1
+      - ADMIN_PASSWORD=kalsierk
+      - ADMIN_NAME=karlod1130
+    ports:
+      - "4000:4000"
     networks:
       - chat-net
     depends_on:
@@ -61,6 +66,31 @@ services:
     command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
     networks:
       - chat-net
+
+  mongo-init:
+    image: mongo
+    container_name: mongo-init
+    depends_on:
+      mongo1:
+        condition: service_started
+      mongo2:
+        condition: service_started
+      mongo3:
+        condition: service_started
+    command: >
+      mongosh --host mongo1 --eval "
+        rs.initiate({
+          _id: 'rs0',
+          members: [
+            {_id: 0, host: 'mongo1:27017'},
+            {_id: 1, host: 'mongo2:27017'},
+            {_id: 2, host: 'mongo3:27017'}
+          ]
+        })
+      "
+    networks:
+      - chat-net
+    restart: on-failure
 
 networks:
   chat-net:
