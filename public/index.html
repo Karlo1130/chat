@@ -98,18 +98,18 @@
 
         // Unirse a la sala
         socket.emit('joinRoom', currentRoom);
-        console.debug(`🟢 Usuario "${username}" se unió a la sala "${currentRoom}"`);
+        console.debug(`Usuario "${username}" se unió a la sala "${currentRoom}"`);
 
         // Cargar mensajes anteriores desde la API
         try {
           const res = await fetch(`${API_URL}/api/chat/messages/${currentRoom}`);
           const messages = await res.json();
-          console.debug(`📥 Mensajes anteriores cargados (${messages.length}):`, messages);
+          console.debug(`Mensajes anteriores cargados (${messages.length}):`, messages);
 
           // Mostrar mensajes en orden
           messages.forEach(addMessageToUI);
         } catch (err) {
-          console.error('🔴 Error al cargar mensajes anteriores:', err);
+          console.error('Error al cargar mensajes anteriores:', err);
         }
       }
     });
@@ -130,9 +130,22 @@
         room: currentRoom,
         timestamp: new Date().toISOString()
       };
+
+      try {
+        await fetch(`${API_URL}/api/chat/messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(message)
+        });
+        console.debug('Mensaje enviado:', message);
+      } catch (err) {
+        console.error('Error al enviar mensaje a la API:', err);
+      }
+
       messageInput.value = '';
     }
 
+    // 🧱 Mostrar mensaje en la interfaz
     function addMessageToUI(message) {
       const container = document.getElementById('messages');
       const isOwnMessage = message.sender === username;
