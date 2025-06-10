@@ -74,23 +74,24 @@
   </div>
 
   <!-- Scripts -->
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <script>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
     const API_URL = 'http://127.0.0.1:3000'; // API REST (contenedor api)
-    const WS_URL = 'ws://127.0.0.1:4000';    // WebSocket (contenedor sync)
+    const WS_URL = 'http://127.0.0.1:4000';  // WebSocket (contenedor sync)
     let currentRoom = 'general';
     let username = '';
 
     const socket = io(WS_URL);
-    socket.onmessage = (event) => {
-      const { type, message } = JSON.parse(event.data);
-      if (type === 'new_message') addMessageToUI(message);
-    };
+
+    socket.on('newMessage', (message) => {
+      addMessageToUI(message);
+    });
 
     document.getElementById('join').addEventListener('click', () => {
       username = document.getElementById('username').value.trim();
       currentRoom = document.getElementById('room').value.trim() || 'general';
       if (username) {
+        socket.emit('joinRoom', currentRoom); // ✅ unirse a la sala
         document.querySelector('.chat-container').classList.remove('hidden');
         document.querySelector('.room-selector').classList.add('hidden');
       }
