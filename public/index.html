@@ -76,24 +76,41 @@
   <!-- Scripts -->
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <script>
-    const API_URL = 'http://127.0.0.1:3000'; // API REST (contenedor api)
-    const WS_URL = 'http://127.0.0.1:4000';  // WebSocket (contenedor sync)
+    const API_URL = 'http://127.0.0.1:3000';
+    const WS_URL = 'http://127.0.0.1:4000'; 
     let currentRoom = 'general';
     let username = '';
 
     const socket = io(WS_URL);
 
     socket.on('newMessage', (message) => {
+      console.debug('[WS] Mensaje recibido:', message);
       addMessageToUI(message);
     });
 
-    document.getElementById('join').addEventListener('click', () => {
+    document.getElementById('join').addEventListener('click', async () => {
       username = document.getElementById('username').value.trim();
       currentRoom = document.getElementById('room').value.trim() || 'general';
+
       if (username) {
-        socket.emit('joinRoom', currentRoom); // ✅ unirse a la sala
         document.querySelector('.chat-container').classList.remove('hidden');
         document.querySelector('.room-selector').classList.add('hidden');
+
+        // Unirse a la sala
+        socket.emit('joinRoom', currentRoom);
+        console.debug(`🟢 Usuario "${username}" se unió a la sala "${currentRoom}"`);
+
+        // Cargar mensajes anteriores desde la API
+        try {
+          const res = await fetch(`${API_URL}/api/chat/messages/${currentRoom}`);
+          const messages = await res.json();
+          console.debug(`📥 Mensajes anteriores cargados (${messages.length}):`, messages);
+
+          // Mostrar mensajes en orden
+          messages.forEach(addMessageToUI);
+        } catch (err) {
+          console.error('🔴 Error al cargar mensajes anteriores:', err);
+        }
       }
     });
 
@@ -113,16 +130,6 @@
         room: currentRoom,
         timestamp: new Date().toISOString()
       };
-
-      try {
-        await fetch(`${API_URL}/api/chat/messages`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(message)
-        });
-      } catch (err) {
-        console.error('Error al enviar mensaje a la API:', err);
-      }
       messageInput.value = '';
     }
 

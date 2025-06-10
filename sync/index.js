@@ -3,7 +3,6 @@ const http = require("http");
 const socketIo = require("socket.io");
 const cors = require("cors");
 const SynchronizationService = require("./services/synchronization");
-const dbClient = require("../shared/config/db");
 
 const app = express();
 const server = http.createServer(app);
@@ -19,7 +18,6 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
-// WebSocket: manejar unión a salas
 io.on("connection", (socket) => {
   console.log("Cliente conectado");
 
@@ -33,6 +31,7 @@ io.on("connection", (socket) => {
   });
 });
 
+// Emitir nuevos mensajes desde el servicio de sincronización
 SynchronizationService.on("newMessage", (message) => {
   io.to(message.room).emit("newMessage", message);
 });

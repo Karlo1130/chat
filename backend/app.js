@@ -1,11 +1,11 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const dbClient = require('../shared/config/db');
-const Message = require('../shared/models/message');
-const logger = require('../shared/config/logger');
-const path = require('path');
-const chatRoutes = require('./routes/chat');
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const dbClient = require("../shared/config/db");
+const Message = require("../shared/models/message");
+const logger = require("../shared/config/logger");
+const path = require("path");
+const chatRoutes = require("./routes/chat");
 
 const app = express();
 
@@ -16,28 +16,28 @@ app.use((req, res, next) => {
   logger.info(`${req.method} ${req.url}`);
   next();
 });
-app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use(express.static(path.join(__dirname, "..", "public")));
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Rutas
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
 });
+app.use("/api/chat", chatRoutes);
 
-app.use('/api/chat', chatRoutes);
-
-// Ruta de estado
-app.get('/api/status', async (req, res) => {
+// Estado del sistema
+app.get("/api/status", async (req, res) => {
   try {
     const db = await dbClient.getDb();
     const stats = await db.stats();
-    
+
     res.json({
-      status: 'online',
-      dbStatus: stats.ok === 1 ? 'healthy' : 'unhealthy',
+      status: "online",
+      dbStatus: stats.ok === 1 ? "healthy" : "unhealthy",
       dbHost: dbClient.url,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   } catch (error) {
-    res.status(500).json({ status: 'offline', error: error.message });
+    res.status(500).json({ status: "offline", error: error.message });
   }
 });
 
@@ -46,15 +46,14 @@ async function initialize() {
   try {
     const db = await dbClient.getDb();
     await Message.createCollection(db);
-    
-    // Verificar el estado del Replica Set
+
+    // Verifica estado del Replica Set
     const adminDb = db.admin();
     const status = await adminDb.command({ replSetGetStatus: 1 });
-    logger.info('Connected to MongoDB Replica Set:', status.set);
-    
-    logger.info('Application initialized');
+    logger.info(`Conectado a Replica Set: ${status.set}`);
+    logger.info("Aplicación inicializada correctamente");
   } catch (error) {
-    logger.error(`Initialization failed: ${error.message}`);
+    logger.error(`Fallo en la inicialización: ${error.message}`);
     process.exit(1);
   }
 }
