@@ -9,7 +9,7 @@ services:
       - ADMIN_PASSWORD=kalsierk
       - ADMIN_NAME=karlod1130
       - URLMONGO=mongodb://mongo1:27017,mongo2:27017,mongo3:27017/chat?replicaSet=rs0
-      - URL=mongodb://25.36.75.90:27017/chat?replicaSet=rs0
+      - URL=mongodb://25.5.195.42:27017/chat?replicaSet=rs0
     networks:
       - chat-net
 
@@ -29,7 +29,7 @@ services:
     container_name: sync
     environment:
       - URL_MONGO=mongodb://mongo1:27017,mongo2:27017,mongo3:27017/chat?replicaSet=rs0
-      - URL=mongodb://25.36.75.90:27017/chat?replicaSet=rs0
+      - URL=mongodb://25.5.195.42:27017/chat?replicaSet=rs0
       - NODE_ID=node1
       - ADMIN_PASSWORD=kalsierk
       - ADMIN_NAME=karlod1130
